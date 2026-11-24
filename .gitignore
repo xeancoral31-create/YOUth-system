@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.db
+*.db-wal
+*.db-shm
+server/data/
+server/uploads/
+server/backups/
+client/android/.gradle/
+client/android/app/build/
+client/android/build/
+.env
+.DS_Store
+Thumbs.db
