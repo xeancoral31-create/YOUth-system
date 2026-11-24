@@ -125,6 +125,7 @@ router.get('/consolidated/pdf', async (req: AuthRequest, res: Response) => {
       generatedBy: req.user!.full_name,
       items: data.items,
       audits: data.audits,
+      settings: data.settings,
       totals: data.totals,
     });
 
@@ -212,6 +213,7 @@ router.get('/audit/:id/pdf', async (req: AuthRequest, res: Response) => {
       audit,
       items,
       generatedBy: req.user!.full_name,
+      settings: getDbSettings(),
     });
 
     registerDocumentRecord({
@@ -285,6 +287,7 @@ router.get('/consolidated/docx', async (req: AuthRequest, res: Response) => {
     await generateConsolidatedDocx(filePath, {
       generatedBy: req.user!.full_name,
       items: data.items,
+      settings: data.settings,
       totals: data.totals,
     });
 
@@ -336,6 +339,7 @@ router.get('/audit/:id/docx', async (req: AuthRequest, res: Response) => {
       audit,
       items,
       generatedBy: req.user!.full_name,
+      settings: getDbSettings(),
     });
 
     registerDocumentRecord({

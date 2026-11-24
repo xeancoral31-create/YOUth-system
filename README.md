@@ -9,8 +9,8 @@ A full-stack, database-integrated **Inventory, Auditing, Automated History Archi
 ```mermaid
 flowchart LR
     subgraph Clients["Client Layer"]
-        WEB["Web Browser\n(React 18 + Vite + Tailwind CSS)"]
-        APK["Android App / PWA\n(Capacitor 6 + Manifest)"]
+        WEB["Web Browser & Installable PWA\n(React 18 + Vite + Service Worker)"]
+        APK["Android App Shell\n(Capacitor 6 + Manifest)"]
     end
 
     subgraph Server["Application Server (Node.js v24 + Express 5)"]
@@ -218,10 +218,11 @@ erDiagram
 1. **Dashboard (`/`):** Live SQLite-backed KPIs (`Registered Items`, `Inventory Value`, `Completed Audits`, `Pending Audits`), Recharts **Inventory Valuation Overview**, **Recent Activity**, and **Recently Registered Items**.
 2. **Inventory Items (`/inventory`):** Manual item registration (no prefilled fake data), automatic `total_value = quantity × unit_price`, price-aware duplicate blocking (same item allowed at different unit prices; identical name + unit + price blocked), search, condition filtering, sorting, CSV export, stock adjustments, and transaction history.
 3. **Inventory Audits (`/audits`, `/audits/:id`):** Physical count verification, automatic discrepancy & financial variance (`₱`) calculation, findings/recommendations, irreversible **Finalize & Lock** (`403` protection), optional inventory reconciliation, and automatic History archiving on completion.
-4. **Reports & Financial Summary (`/reports`):** Official A4 print layout with **Butuan Gospel Church • BGC Youth Ministry** letterhead, **Church Board** signatory block, **Export Word (`.docx`)**, **Download PDF**, **Export Excel (`.xlsx`)**, and **Print A4** (automatically archives & resets active inventory for Administrators).
+4. **Reports & Financial Summary (`/reports`):** Official A4 print layout dynamically populated from `system_settings` (`organization_name`, `default_approving_officer` / **Church Board**), **Export Word (`.docx`)**, **Download PDF**, **Export Excel (`.xlsx`)**, and **Print A4** (automatically archives & resets active inventory for Administrators).
 5. **History Archives (`/history`):** Independent historical snapshots organized by date, period, and activity trigger (`Print Report`, `Audit Completed`, `Weekly Sunday Reset`), with search, date/activity filters, expandable item tables, **Hide/Unhide** from default view, and **Permanent Delete** (Admin only).
 6. **Document Center (`/documents`):** Centralized archive of all generated PDF, Word (`.docx`), and Excel (`.xlsx`) exports with search, type filter, preview, download, and Admin delete.
-7. **System Administration (`/logs`, `/users`, `/backup`, `/settings`):**
+7. **Installable Desktop & Mobile App (PWA + Capacitor):** Includes a network-first Service Worker (`sw.js`), Web App Manifest (`manifest.webmanifest`), and one-click **Install App** button on supported browsers, plus a synced Capacitor Android project (`c:/BGCyouth/client/android`).
+8. **System Administration (`/logs`, `/users`, `/backup`, `/settings`):**
    - **Activity Logs:** Full audit trail of logins, inventory changes, audits, exports, and resets.
    - **User Accounts:** Role-based access control (`admin`, `auditor`, `staff`, `viewer`).
    - **Backup & Recovery:** SQLite `PRAGMA integrity_check`, live `.db` snapshots (`VACUUM INTO`), and verified restore.

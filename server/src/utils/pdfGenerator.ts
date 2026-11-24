@@ -3,12 +3,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { formatPHPForPdf } from './format';
 
-function drawOfficialHeader(doc: PDFKit.PDFDocument, title: string, subtitle: string) {
+function drawOfficialHeader(doc: PDFKit.PDFDocument, title: string, subtitle: string, orgHeader = 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY') {
   doc
     .font('Helvetica-Bold')
     .fontSize(10)
     .fillColor('#1e3a5f')
-    .text('BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY', { align: 'center' });
+    .text(orgHeader.toUpperCase(), { align: 'center' });
   doc
     .font('Helvetica-Bold')
     .fontSize(16)
@@ -78,6 +78,7 @@ export async function generateConsolidatedFinancialPdf(
     generatedBy: string;
     items: any[];
     audits: any[];
+    settings?: Record<string, string>;
     totals: {
       totalItems: number;
       totalUnits: number;
@@ -98,7 +99,8 @@ export async function generateConsolidatedFinancialPdf(
     drawOfficialHeader(
       doc,
       'CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT',
-      `Generated on ${new Date().toLocaleString('en-PH')} | Prepared by: ${data.generatedBy}`
+      `Generated on ${new Date().toLocaleString('en-PH')} | Prepared by: ${data.generatedBy}`,
+      data.settings?.organization_name
     );
 
     // Executive Summary Box
@@ -202,8 +204,8 @@ export async function generateConsolidatedFinancialPdf(
       data.generatedBy,
       'Verified By (Auditor):',
       '______________________',
-      'Approved By (Church Board):',
-      '______________________'
+      `Approved By (${data.settings?.default_approving_officer || 'Church Board'}):`,
+      data.settings?.default_approving_officer || 'Church Board'
     );
 
     doc.end();
@@ -218,6 +220,7 @@ export async function generateIndividualAuditPdf(
     audit: any;
     items: any[];
     generatedBy: string;
+    settings?: Record<string, string>;
   }
 ): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -229,7 +232,8 @@ export async function generateIndividualAuditPdf(
     drawOfficialHeader(
       doc,
       'OFFICIAL INVENTORY AUDIT REPORT',
-      `Audit Reference: ${audit.audit_ref} | Status: ${audit.status} | Audit Date: ${audit.audit_date}`
+      `Audit Reference: ${audit.audit_ref} | Status: ${audit.status} | Audit Date: ${audit.audit_date}`,
+      data.settings?.organization_name
     );
 
     const left = doc.page.margins.left;
@@ -332,7 +336,7 @@ export async function generateIndividualAuditPdf(
       'Finalized By:',
       audit.finalized_by_name || 'Pending Finalization',
       'Approved By:',
-      audit.approved_by || '______________________'
+      audit.approved_by || data.settings?.default_approving_officer || 'Church Board'
     );
 
     doc.end();

@@ -28,14 +28,14 @@ function cell(text, opts = {}) {
         ],
     });
 }
-function buildLetterhead(title, subtitle) {
+function buildLetterhead(title, subtitle, orgHeader = 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY') {
     return [
         new docx_1.Paragraph({
             alignment: docx_1.AlignmentType.CENTER,
             spacing: { after: 40 },
             children: [
                 new docx_1.TextRun({
-                    text: 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY',
+                    text: orgHeader.toUpperCase(),
                     bold: true,
                     size: 20,
                     color: '1E3A5F',
@@ -187,7 +187,7 @@ async function generateConsolidatedDocx(filePath, data) {
                     page: { size: { width: 11906, height: 16838 }, margin: { top: 900, right: 900, bottom: 900, left: 900 } },
                 },
                 children: [
-                    ...buildLetterhead('CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT', `Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`),
+                    ...buildLetterhead('CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT', `Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`, data.settings?.organization_name),
                     new docx_1.Paragraph({
                         spacing: { before: 120, after: 80 },
                         children: [new docx_1.TextRun({ text: '1. EXECUTIVE SUMMARY', bold: true, size: 20, font: 'Calibri' })],
@@ -198,7 +198,7 @@ async function generateConsolidatedDocx(filePath, data) {
                         children: [new docx_1.TextRun({ text: '2. INVENTORY VALUATION SCHEDULE', bold: true, size: 20, font: 'Calibri' })],
                     }),
                     new docx_1.Table({ width: { size: 100, type: docx_1.WidthType.PERCENTAGE }, rows: [itemHeader, ...itemRows] }),
-                    buildSignatureTable(data.generatedBy, 'Inventory Auditor', 'Church Board'),
+                    buildSignatureTable(data.generatedBy, 'Inventory Auditor', data.settings?.default_approving_officer || 'Church Board'),
                 ],
             },
         ],
@@ -270,7 +270,7 @@ async function generateIndividualAuditDocx(filePath, data) {
                     page: { size: { width: 11906, height: 16838 }, margin: { top: 900, right: 900, bottom: 900, left: 900 } },
                 },
                 children: [
-                    ...buildLetterhead(`OFFICIAL INVENTORY AUDIT REPORT — ${audit.audit_ref}`, `Status: ${audit.status} | Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`),
+                    ...buildLetterhead(`OFFICIAL INVENTORY AUDIT REPORT — ${audit.audit_ref}`, `Status: ${audit.status} | Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`, data.settings?.organization_name),
                     metaTable,
                     new docx_1.Paragraph({
                         spacing: { before: 200, after: 80 },
@@ -291,7 +291,7 @@ async function generateIndividualAuditDocx(filePath, data) {
                             new docx_1.TextRun({ text: audit.recommendations || 'None recorded.', size: 19, font: 'Calibri' }),
                         ],
                     }),
-                    buildSignatureTable(audit.auditor_name, audit.finalized_by_name || 'Pending', audit.approved_by || 'Church Board'),
+                    buildSignatureTable(audit.auditor_name, audit.finalized_by_name || 'Pending', audit.approved_by || data.settings?.default_approving_officer || 'Church Board'),
                 ],
             },
         ],

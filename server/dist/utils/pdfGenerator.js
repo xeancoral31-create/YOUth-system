@@ -10,12 +10,12 @@ const pdfkit_1 = __importDefault(require("pdfkit"));
 const node_fs_1 = __importDefault(require("node:fs"));
 const node_path_1 = __importDefault(require("node:path"));
 const format_1 = require("./format");
-function drawOfficialHeader(doc, title, subtitle) {
+function drawOfficialHeader(doc, title, subtitle, orgHeader = 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY') {
     doc
         .font('Helvetica-Bold')
         .fontSize(10)
         .fillColor('#1e3a5f')
-        .text('BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY', { align: 'center' });
+        .text(orgHeader.toUpperCase(), { align: 'center' });
     doc
         .font('Helvetica-Bold')
         .fontSize(16)
@@ -72,7 +72,7 @@ async function generateConsolidatedFinancialPdf(filePath, data) {
         const doc = new pdfkit_1.default({ size: 'A4', margin: 40, bufferPages: true });
         const stream = node_fs_1.default.createWriteStream(filePath);
         doc.pipe(stream);
-        drawOfficialHeader(doc, 'CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT', `Generated on ${new Date().toLocaleString('en-PH')} | Prepared by: ${data.generatedBy}`);
+        drawOfficialHeader(doc, 'CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT', `Generated on ${new Date().toLocaleString('en-PH')} | Prepared by: ${data.generatedBy}`, data.settings?.organization_name);
         // Executive Summary Box
         doc.font('Helvetica-Bold').fontSize(10.5).fillColor('#0f172a').text('1. EXECUTIVE FINANCIAL & STOCK SUMMARY');
         doc.moveDown(0.3);
@@ -160,7 +160,7 @@ async function generateConsolidatedFinancialPdf(filePath, data) {
                 doc.y = y + 18;
             });
         }
-        drawSignatureBlock(doc, 'Prepared By:', data.generatedBy, 'Verified By (Auditor):', '______________________', 'Approved By (Church Board):', '______________________');
+        drawSignatureBlock(doc, 'Prepared By:', data.generatedBy, 'Verified By (Auditor):', '______________________', `Approved By (${data.settings?.default_approving_officer || 'Church Board'}):`, data.settings?.default_approving_officer || 'Church Board');
         doc.end();
         stream.on('finish', resolve);
         stream.on('error', reject);
@@ -172,7 +172,7 @@ async function generateIndividualAuditPdf(filePath, data) {
         const stream = node_fs_1.default.createWriteStream(filePath);
         doc.pipe(stream);
         const { audit, items } = data;
-        drawOfficialHeader(doc, 'OFFICIAL INVENTORY AUDIT REPORT', `Audit Reference: ${audit.audit_ref} | Status: ${audit.status} | Audit Date: ${audit.audit_date}`);
+        drawOfficialHeader(doc, 'OFFICIAL INVENTORY AUDIT REPORT', `Audit Reference: ${audit.audit_ref} | Status: ${audit.status} | Audit Date: ${audit.audit_date}`, data.settings?.organization_name);
         const left = doc.page.margins.left;
         const usableW = doc.page.width - doc.page.margins.left - doc.page.margins.right;
         doc.font('Helvetica-Bold').fontSize(10).fillColor('#0f172a').text('1. AUDIT METADATA & FINANCIAL SUMMARY');
@@ -256,7 +256,7 @@ async function generateIndividualAuditPdf(filePath, data) {
         doc.moveDown(0.3);
         doc.font('Helvetica-Bold').fontSize(8.5).fillColor('#0f172a').text('Recommendations:', left);
         doc.font('Helvetica').fontSize(8.5).fillColor('#334155').text(audit.recommendations || 'No recommendations recorded.', left);
-        drawSignatureBlock(doc, 'Prepared / Audited By:', audit.auditor_name, 'Finalized By:', audit.finalized_by_name || 'Pending Finalization', 'Approved By:', audit.approved_by || '______________________');
+        drawSignatureBlock(doc, 'Prepared / Audited By:', audit.auditor_name, 'Finalized By:', audit.finalized_by_name || 'Pending Finalization', 'Approved By:', audit.approved_by || data.settings?.default_approving_officer || 'Church Board');
         doc.end();
         stream.on('finish', resolve);
         stream.on('error', reject);

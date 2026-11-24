@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, Server } from 'lucide-react';
+import { Lock, User, Server, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getApiBase, setApiBase } from '../api/client';
+import { usePwaInstall } from '../hooks/usePwaInstall';
+import { InstallAppButton } from '../components/InstallAppButton';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -13,6 +15,7 @@ export function LoginPage() {
   const [showServerConfig, setShowServerConfig] = useState(Boolean(getApiBase()));
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { canInstall, promptInstall } = usePwaInstall();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +102,7 @@ export function LoginPage() {
             {submitting ? 'Signing In...' : 'Sign In'}
           </button>
 
-          <div className="pt-2">
+          <div className="pt-2 flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={() => setShowServerConfig((v) => !v)}
@@ -108,18 +111,28 @@ export function LoginPage() {
               <Server className="w-3 h-3" />
               {showServerConfig ? 'Hide Mobile / Server URL' : 'Mobile App / Custom Server URL'}
             </button>
-            {showServerConfig && (
-              <div className="mt-2">
-                <input
-                  type="url"
-                  value={serverUrl}
-                  onChange={(e) => setServerUrl(e.target.value)}
-                  placeholder="http://192.168.x.x:4000 (leave blank for web)"
-                  className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-navy-700"
-                />
-              </div>
+            {canInstall && (
+              <button
+                type="button"
+                onClick={promptInstall}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#253b80] hover:underline"
+              >
+                <Download className="w-3 h-3" />
+                Install App
+              </button>
             )}
           </div>
+          {showServerConfig && (
+            <div className="mt-2">
+              <input
+                type="url"
+                value={serverUrl}
+                onChange={(e) => setServerUrl(e.target.value)}
+                placeholder="http://192.168.x.x:4000 (leave blank for web)"
+                className="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-navy-700"
+              />
+            </div>
+          )}
 
           <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-500 text-center">
             All sessions and actions are logged for official accountability.

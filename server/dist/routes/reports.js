@@ -100,6 +100,7 @@ router.get('/consolidated/pdf', async (req, res) => {
             generatedBy: req.user.full_name,
             items: data.items,
             audits: data.audits,
+            settings: data.settings,
             totals: data.totals,
         });
         registerDocumentRecord({
@@ -179,6 +180,7 @@ router.get('/audit/:id/pdf', async (req, res) => {
             audit,
             items,
             generatedBy: req.user.full_name,
+            settings: (0, database_1.getDbSettings)(),
         });
         registerDocumentRecord({
             title: `Audit Report — ${audit.audit_ref} (${audit.title})`,
@@ -245,6 +247,7 @@ router.get('/consolidated/docx', async (req, res) => {
         await (0, docxGenerator_1.generateConsolidatedDocx)(filePath, {
             generatedBy: req.user.full_name,
             items: data.items,
+            settings: data.settings,
             totals: data.totals,
         });
         registerDocumentRecord({
@@ -291,6 +294,7 @@ router.get('/audit/:id/docx', async (req, res) => {
             audit,
             items,
             generatedBy: req.user.full_name,
+            settings: (0, database_1.getDbSettings)(),
         });
         registerDocumentRecord({
             title: `Audit Report Word — ${audit.audit_ref} (${audit.title})`,

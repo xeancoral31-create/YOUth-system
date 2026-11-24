@@ -35,14 +35,14 @@ function cell(text: string, opts: { bold?: boolean; align?: (typeof AlignmentTyp
   });
 }
 
-function buildLetterhead(title: string, subtitle: string): Paragraph[] {
+function buildLetterhead(title: string, subtitle: string, orgHeader = 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY'): Paragraph[] {
   return [
     new Paragraph({
       alignment: AlignmentType.CENTER,
       spacing: { after: 40 },
       children: [
         new TextRun({
-          text: 'BUTUAN GOSPEL CHURCH • BGC YOUTH MINISTRY',
+          text: orgHeader.toUpperCase(),
           bold: true,
           size: 20,
           color: '1E3A5F',
@@ -138,6 +138,7 @@ export async function generateConsolidatedDocx(
   data: {
     generatedBy: string;
     items: any[];
+    settings?: Record<string, string>;
     totals: {
       totalItems: number;
       totalUnits: number;
@@ -219,7 +220,8 @@ export async function generateConsolidatedDocx(
         children: [
           ...buildLetterhead(
             'CONSOLIDATED INVENTORY & FINANCIAL SUMMARY REPORT',
-            `Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`
+            `Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`,
+            data.settings?.organization_name
           ),
           new Paragraph({
             spacing: { before: 120, after: 80 },
@@ -231,7 +233,11 @@ export async function generateConsolidatedDocx(
             children: [new TextRun({ text: '2. INVENTORY VALUATION SCHEDULE', bold: true, size: 20, font: 'Calibri' })],
           }),
           new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [itemHeader, ...itemRows] }),
-          buildSignatureTable(data.generatedBy, 'Inventory Auditor', 'Church Board'),
+          buildSignatureTable(
+            data.generatedBy,
+            'Inventory Auditor',
+            data.settings?.default_approving_officer || 'Church Board'
+          ),
         ],
       },
     ],
@@ -243,7 +249,7 @@ export async function generateConsolidatedDocx(
 
 export async function generateIndividualAuditDocx(
   filePath: string,
-  data: { audit: any; items: any[]; generatedBy: string }
+  data: { audit: any; items: any[]; generatedBy: string; settings?: Record<string, string> }
 ): Promise<void> {
   const { audit, items } = data;
 
@@ -317,7 +323,8 @@ export async function generateIndividualAuditDocx(
         children: [
           ...buildLetterhead(
             `OFFICIAL INVENTORY AUDIT REPORT — ${audit.audit_ref}`,
-            `Status: ${audit.status} | Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`
+            `Status: ${audit.status} | Generated: ${new Date().toLocaleString('en-PH')} | Prepared By: ${data.generatedBy}`,
+            data.settings?.organization_name
           ),
           metaTable,
           new Paragraph({
@@ -342,7 +349,7 @@ export async function generateIndividualAuditDocx(
           buildSignatureTable(
             audit.auditor_name,
             audit.finalized_by_name || 'Pending',
-            audit.approved_by || 'Church Board'
+            audit.approved_by || data.settings?.default_approving_officer || 'Church Board'
           ),
         ],
       },

@@ -17,8 +17,11 @@ import {
   Home,
   ChevronRight,
   UserCheck,
+  Download,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { usePwaInstall } from '../hooks/usePwaInstall';
+import { InstallAppButton } from './InstallAppButton';
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dashboard',
@@ -38,6 +41,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { canInstall, promptInstall } = usePwaInstall();
 
   const navItems = [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard, show: true },
@@ -195,7 +199,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-medium text-slate-700">{pageTitle}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            {canInstall && (
+              <button
+                type="button"
+                onClick={promptInstall}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#253b80] hover:bg-[#1d2f66] rounded-lg shadow-sm transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Install App
+              </button>
+            )}
             <span className="hidden sm:inline">
               Securely signed in as <span className="font-semibold text-slate-800">{user?.username}</span>
             </span>
