@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: bgcyouth-system
+    runtime: node
+    plan: free
+    buildCommand: npm run deploy:build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BGCYOUTH_JWT_SECRET
+        generateValue: true
+      - key: BGCYOUTH_DATA_DIR
+        value: /var/data/bgcyouth
+    disk:
+      name: bgcyouth-data
+      mountPath: /var/data/bgcyouth
+      sizeGB: 1
