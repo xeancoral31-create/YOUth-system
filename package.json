@@ -13,6 +13,7 @@
     "build": "npm run build:server && npm run build:client",
     "deploy:build": "npm run install:all && npm run build",
     "start": "npm --prefix server start",
+    "dev": "node scripts/dev.mjs",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "apk:sync": "npm --prefix client run cap:sync"
