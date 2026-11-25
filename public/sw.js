@@ -1,9 +1,9 @@
-const CACHE_NAME = 'bgcyouth-shell-v1';
+const CACHE_NAME = 'bgcyouth-shell-v2';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(['/', '/index.html', '/bgcyouth-logo.jpg', '/manifest.webmanifest']))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(['/', '/bgcyouth-logo.jpg', '/manifest.webmanifest']))
   );
 });
 
@@ -36,6 +36,6 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request).then((cached) => cached || caches.match('/index.html')))
+      .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
   );
 });
