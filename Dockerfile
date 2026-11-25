@@ -9,10 +9,10 @@ COPY . .
 RUN npm run build
 
 ENV NODE_ENV=production
-ENV PORT=4000
+ENV PORT=3000
 ENV BGCYOUTH_DATA_DIR=/app/storage
 
 VOLUME ["/app/storage"]
-EXPOSE 4000
+EXPOSE 3000
 
 CMD ["npm", "start"]
