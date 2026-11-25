@@ -3,7 +3,7 @@ services:
     name: bgcyouth-system
     runtime: node
     plan: free
-    buildCommand: npm run deploy:build
+    buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV

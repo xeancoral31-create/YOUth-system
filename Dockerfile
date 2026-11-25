@@ -2,15 +2,10 @@ FROM node:24-slim
 
 WORKDIR /app
 
-COPY package.json ./
-COPY server/package*.json ./server/
-COPY client/package*.json ./client/
+COPY package*.json ./
+RUN npm ci
 
-RUN npm --prefix server ci && npm --prefix client ci
-
-COPY server ./server
-COPY client ./client
-
+COPY . .
 RUN npm run build
 
 ENV NODE_ENV=production
