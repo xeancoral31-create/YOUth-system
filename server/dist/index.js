@@ -23,6 +23,7 @@ const weeklyScheduler_1 = require("./services/weeklyScheduler");
 (0, database_1.initDatabase)();
 const app = (0, express_1.default)();
 const PORT = Number(process.env.PORT) || 4000;
+app.set('trust proxy', 1);
 app.use((0, helmet_1.default)({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
     contentSecurityPolicy: false,
@@ -61,7 +62,7 @@ app.use((err, _req, res, _next) => {
     console.error('Server error:', err);
     res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
 });
-app.listen(PORT, () => {
-    console.log(`BGCyouth Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`BGCyouth Server running on http://0.0.0.0:${PORT}`);
     (0, weeklyScheduler_1.startWeeklyScheduler)();
 });

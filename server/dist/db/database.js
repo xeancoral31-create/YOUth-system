@@ -13,12 +13,15 @@ const node_sqlite_1 = require("node:sqlite");
 const node_path_1 = __importDefault(require("node:path"));
 const node_fs_1 = __importDefault(require("node:fs"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const DATA_DIR = node_path_1.default.resolve(__dirname, '../../data');
-const UPLOADS_DIR = node_path_1.default.resolve(__dirname, '../../uploads');
+const STORAGE_ROOT = process.env.BGCYOUTH_DATA_DIR
+    ? node_path_1.default.resolve(process.env.BGCYOUTH_DATA_DIR)
+    : node_path_1.default.resolve(__dirname, '../..');
+const DATA_DIR = node_path_1.default.join(STORAGE_ROOT, 'data');
+const UPLOADS_DIR = node_path_1.default.join(STORAGE_ROOT, 'uploads');
 const PHOTOS_DIR = node_path_1.default.join(UPLOADS_DIR, 'photos');
 const DOCS_DIR = node_path_1.default.join(UPLOADS_DIR, 'documents');
 const GENERATED_DIR = node_path_1.default.join(UPLOADS_DIR, 'generated');
-const BACKUPS_DIR = node_path_1.default.resolve(__dirname, '../../backups');
+const BACKUPS_DIR = node_path_1.default.join(STORAGE_ROOT, 'backups');
 for (const dir of [DATA_DIR, UPLOADS_DIR, PHOTOS_DIR, DOCS_DIR, GENERATED_DIR, BACKUPS_DIR]) {
     node_fs_1.default.mkdirSync(dir, { recursive: true });
 }

@@ -36,10 +36,11 @@ router.post('/login', (req, res) => {
         position: user.position,
     };
     const token = (0, auth_1.signToken)(authUser);
+    const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
     res.cookie('bgcyouth_token', token, {
         httpOnly: true,
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: isHttps,
         maxAge: 12 * 60 * 60 * 1000,
     });
     const authReq = req;
